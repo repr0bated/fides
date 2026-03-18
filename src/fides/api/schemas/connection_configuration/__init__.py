@@ -13,6 +13,12 @@ from fides.api.schemas.connection_configuration.connection_secrets import (
 from fides.api.schemas.connection_configuration.connection_secrets_attentive import (
     AttentiveSchema,
 )
+from fides.api.schemas.connection_configuration.connection_secrets_aws import (
+    AWSDocsSchema as AWSDocsSchema,
+)
+from fides.api.schemas.connection_configuration.connection_secrets_aws import (
+    AWSSchema as AWSSchema,
+)
 from fides.api.schemas.connection_configuration.connection_secrets_bigquery import (
     BigQueryDocsSchema as BigQueryDocsSchema,
 )
@@ -169,6 +175,7 @@ from fides.api.schemas.connection_configuration.connections_secrets_https import
 from fides.api.schemas.saas.saas_config import SaaSConfig as SaaSConfig
 
 secrets_schemas: Dict[str, Any] = {
+    ConnectionType.aws.value: AWSSchema,
     ConnectionType.attentive_email.value: AttentiveSchema,
     ConnectionType.bigquery.value: BigQuerySchema,
     ConnectionType.datahub.value: DatahubSchema,
@@ -233,6 +240,7 @@ def get_connection_secrets_schema(
 # Creating the actual connection secrets schemas happens later once we know
 # what type of schema we should validate against.
 connection_secrets_schemas = Union[
+    AWSDocsSchema,
     BigQueryDocsSchema,
     DatahubDocsSchema,
     DynamicErasureEmailDocsSchema,
