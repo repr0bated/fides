@@ -17,6 +17,7 @@ import {
   useDeleteDiscoveryMonitorMutation,
   useExecuteDiscoveryMonitorMutation,
   useExecuteIdentityProviderMonitorMutation,
+  useExecuteInfraMonitorMutation,
   useLazyGetMonitorDeletionImpactQuery,
 } from "~/features/data-discovery-and-detection/discovery-detection.slice";
 
@@ -95,11 +96,13 @@ const MonitorConfigActionsCell = ({
   monitorId,
   isWebsiteMonitor,
   isOktaMonitor,
+  isAWSMonitor,
   onEditClick,
 }: {
   monitorId?: string | null;
   isWebsiteMonitor?: boolean;
   isOktaMonitor?: boolean;
+  isAWSMonitor?: boolean;
   onEditClick: () => void;
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -116,16 +119,21 @@ const MonitorConfigActionsCell = ({
     defaultSuccessMsg: "Monitor deleted successfully",
   });
 
-  // Use Identity Provider Monitor endpoint for Okta, otherwise use regular endpoint
+  // Use the appropriate execute endpoint based on monitor type
   const [executeRegularMonitor, { isLoading: executeRegularIsLoading }] =
     useExecuteDiscoveryMonitorMutation();
 
   const [executeOktaMonitor, { isLoading: executeOktaIsLoading }] =
     useExecuteIdentityProviderMonitorMutation();
 
+  const [executeInfraMonitor, { isLoading: executeInfraIsLoading }] =
+    useExecuteInfraMonitorMutation();
+
   const executeIsLoading = isOktaMonitor
     ? executeOktaIsLoading
-    : executeRegularIsLoading;
+    : isAWSMonitor
+      ? executeInfraIsLoading
+      : executeRegularIsLoading;
 
   const { toastResult: toastExecuteResult } = useQueryResultToast({
     defaultErrorMsg: "A problem occurred initiating monitor execution",
@@ -157,7 +165,9 @@ const MonitorConfigActionsCell = ({
   const handleExecute = async () => {
     const result = isOktaMonitor
       ? await executeOktaMonitor({ monitor_config_key: monitorId })
-      : await executeRegularMonitor({ monitor_config_id: monitorId });
+      : isAWSMonitor
+        ? await executeInfraMonitor({ monitor_config_key: monitorId! })
+        : await executeRegularMonitor({ monitor_config_id: monitorId });
     toastExecuteResult(result);
   };
 
