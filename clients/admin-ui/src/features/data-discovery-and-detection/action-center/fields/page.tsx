@@ -331,21 +331,21 @@ const ActionCenterFields = ({
                 )}
               </Flex>
             </Flex>
-            <Flex justify="space-between" wrap="wrap" gap="small">
-              <MonitorFieldsSearchForm
-                form={form}
-                {...formProps}
-                onFinish={(...args) => {
-                  formProps.onFinish(...args);
-                  resetPagination();
-                  resetListSelect();
-                }}
-                availableFilters={{
-                  data_category: availableFilters?.data_category ?? undefined,
-                }}
-                shortcutCallback={() => setHotkeysHelperModalOpen(true)}
-              />
-              <Flex gap="small">
+            <Flex justify="space-between" gap="small">
+              <div className="grid w-full grid-cols-[1fr,1fr,1fr,auto,auto] grid-rows-2 gap-2 overflow-hidden xl:grid-cols-[max-content,1fr,1fr,1fr,1fr,auto,auto] xl:grid-rows-1">
+                <MonitorFieldsSearchForm
+                  form={form}
+                  {...formProps}
+                  onFinish={(...args) => {
+                    formProps.onFinish(...args);
+                    resetPagination();
+                    resetListSelect();
+                  }}
+                  availableFilters={{
+                    data_category: availableFilters?.data_category ?? undefined,
+                  }}
+                  shortcutCallback={() => setHotkeysHelperModalOpen(true)}
+                />
                 <Dropdown
                   onOpenChange={onActionDropdownOpenChange}
                   menu={{
@@ -402,7 +402,7 @@ const ActionCenterFields = ({
                     aria-label="Refresh"
                   />
                 </Tooltip>
-              </Flex>
+              </div>
             </Flex>
             <Flex gap="middle" align="center">
               <Checkbox id="select-all" {...checkboxProps} />
